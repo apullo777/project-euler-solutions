@@ -1,3 +1,4 @@
+
 # sum of all even-indexed terms of Fibonacci sequence
 def sum_of_fibonacci_even_indexed(bound):
 
