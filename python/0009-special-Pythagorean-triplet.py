@@ -10,7 +10,7 @@ def find_triplet_product(sum):
     bound = sum // 3 + 100
     for a in range(1, bound):
         for b in range(1, bound):
-            c = (1000 - a) - b
+            c = (sum - a) - b
             if a < b < c:
                 if square(a) + square(b) == square(c):
                     return a * b * c
