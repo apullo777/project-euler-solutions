@@ -18,35 +18,38 @@ def make_matrix(string, dim):
         cols[i] = [int(x) for x in str_list[i::dim]]
     return rows, cols
 
+def find_largest_product(lists, adj_num):
 
-def find_largest_product(list, adj_num):
-    max_product, curr_product = 0, 1
+    def find_local_largest_product(list):
+        max_product, curr_product = 0, 1
+        # Loop through each sub-list of "num" with length "adj_num"
+        for i in range(len(list) - adj_num + 1):
+            curr_list = list[i:i + adj_num]
+            curr_product = 1
+            # Loop through each number in the current list
+            for n in curr_list:
+                curr_product *= int(n)
+            max_product = max(max_product, curr_product)
+        return max_product
 
-    # Loop through each sub-list of "num" with length "adj_num"
-    for i in range(len(list) - adj_num + 1):
-        curr_list = list[i:i + adj_num]
-
-        curr_product = 1
-
-        # Loop through each number in the current list
-        for n in curr_list:
-            curr_product *= int(n)
-        max_product = max(max_product, curr_product)
-
-    return max_product
+    ans = 0
+    for list in lists:
+        ans = max(find_local_largest_product(list), ans)
+    return ans
+    
 
 def get_diagonals(grid, is_bottom_to_top_right=True):
     # Get the number of rows and columns in the grid
-    grid_dimension = len(grid)
+    dim = len(grid)
     # Check if the grid is square
-    assert grid_dimension == len(grid[0])
+    assert dim == len(grid[0])
     
     # Initialize an empty list of lists to store the diagonals
-    diagonal_grid = [[] for diagonal in range(2 * grid_dimension - 1)]
+    diagonal_grid = [[] for diagonal in range(2 * dim - 1)]
     
     # Loop through each row and column in the grid
-    for row in range(grid_dimension):
-        for col in range(grid_dimension):
+    for row in range(dim):
+        for col in range(dim):
             # If the flag is_bottom_to_top_right is True, add the item from grid[col][row]
             # to the corresponding diagonal in diagonal_grid
             if is_bottom_to_top_right:
@@ -54,26 +57,28 @@ def get_diagonals(grid, is_bottom_to_top_right=True):
             # If the flag is_bottom_to_top_right is False, add the item from grid[row][col]
             # to the corresponding diagonal in diagonal_grid
             else:
-                diagonal_grid[col - row + (grid_dimension - 1)].append(grid[row][col])
+                diagonal_grid[col - row + (dim - 1)].append(grid[row][col])
     
     # Return the list of lists containing the diagonals
     return diagonal_grid
 
 
 
-#def compute(input):
-#    ans = 0
-#    matrix, columns = make_matrix(input, 20)
-#    max_diagonal1 = find_largest_product(get_diagonals(matrix, True), 4)
-#    max_diagonal2 = find_largest_product(get_diagonals(matrix, False), 4)
-#    max_column = find_largest_product(columns, 4)
-#    return max(max_diagonal1, max_diagonal2, max_column)
+def compute(input):
+    ans = 0
+    rows, cols = make_matrix(input, 20)
+    diag_1 = get_diagonals(rows, False)
+    diag_2 = get_diagonals(cols, True)
 
-rows = make_matrix(input, 20)[0]
-cols = make_matrix(input, 20)[1]
+    max_rows = find_largest_product(rows, 4)
+    max_cols = find_largest_product(cols, 4)
+    max_diag1 = find_largest_product(diag_1, 4)
+    max_diag2 = find_largest_product(diag_2, 4)
+    return max([max_rows, max_cols, max_diag1, max_diag2])
 
-#print(rows)
-#print(cols)
-#print(get_diagonals(rows, True))
-print(get_diagonals(rows, False))
-print(type((get_diagonals(rows, False))[0][0]))
+def main():
+    start = time_ns()
+    print(f"answer: {compute(input)} in {(time_ns()-start)/1e6}ms")  # 70600674 in 1.439ms
+
+if __name__ == '__main__':
+    main()
